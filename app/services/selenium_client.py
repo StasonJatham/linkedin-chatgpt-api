@@ -47,13 +47,15 @@ class ChatGPTClient:
         # TODO: will ich auch noch stabiler bauen das nicht alles stehen muss.
         """Wenn nicht eingeloggt, warte auf manuelles Login via Konsole."""
         if not self.is_logged_in():
-            print("⏳ Bitte logge dich im Browser-Fenster ein und drücke [Enter]…")
+            print("+ Bitte logge dich im Browser-Fenster ein und drücke [Enter]…")
             input()
             if not self.is_logged_in():
                 raise RuntimeError("Login fehlgeschlagen – bitte erneut einloggen.")
             
     def set_message(self, message: str):
-        logger.info(f"📨 Sende Nachricht: {message}")
+        # TODO: IF image then you cannot set inner html of this, you must add the text like "huhn" the span needs to stay intact
+        # <p><span data-mention-id="picture_v2" data-mention-hint="Bild erstellen " class="hint-pill" contenteditable="false">Bild erstellen </span>huhn</p>
+        logger.info(f"Sende Nachricht: {message}")
         self.driver.execute_script(
             "document.querySelector('#prompt-textarea > p').innerHTML = arguments[0];",
             message
@@ -86,32 +88,32 @@ class ChatGPTClient:
     def wait_for_response(self, timeout: int = 40):
         start = time.time()
         has_started = False
-        logger.info("⏳ Warte auf Start der Antwort...")
+        logger.info("+ Warte auf Start der Antwort...")
         while time.time() - start < timeout:
             if self.is_typing():
                 if not has_started:
-                    logger.info("🟢 ChatGPT beginnt zu tippen...")
+                    logger.info("+ ChatGPT beginnt zu tippen...")
                     has_started = True
             elif has_started:
-                logger.info("✅ Antwort ist vollständig.")
+                logger.info("+ Antwort ist vollständig.")
                 return
             time.sleep(0.4)
-        logger.warning("⚠️ Timeout: Antwort hat nicht wie erwartet geendet.")
+        logger.warning("- Timeout: Antwort hat nicht wie erwartet geendet.")
 
     def wait_for_image(self, timeout: int = 180):
         start = time.time()
         has_started = False
-        logger.info("⏳ Warte auf Start der Bildgenerirung...")
+        logger.info("+ Warte auf Start der Bildgenerirung...")
         while time.time() - start < timeout:
             if self.is_generating():
                 if not has_started:
-                    logger.info("🟢 ChatGPT beginnt zu generieren...")
+                    logger.info("+ ChatGPT beginnt zu generieren...")
                     has_started = True
             elif has_started:
-                logger.info("✅ Image ist vollständig.")
+                logger.info("+ Image ist vollständig.")
                 return
             time.sleep(0.4)
-        logger.warning("⚠️ Timeout: Bild-Generierung hat nicht wie erwartet geendet.")
+        logger.warning("- Timeout: Bild-Generierung hat nicht wie erwartet geendet.")
 
     def send_message(self, message: str, mode: str = "default"):
         self.set_message(message)

@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     http_timeout: int = 15
 
     # === Logging ===
-    log_to_file: bool = True
+    log_to_file: bool = False
     log_file_path: Path = Path("chat_automation.log")
 
     class Config:

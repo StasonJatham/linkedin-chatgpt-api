@@ -1,3 +1,4 @@
+from datetime import time
 import logging
 import mimetypes
 from pathlib import Path
@@ -12,26 +13,33 @@ from config import settings
 from models import MessageIn, MessageOut
 from services.selenium_client import init_driver, ChatGPTClient
 from services.image_downloader import download_image
+import sys
+
 
 # Verzeichnisse und Logging
 IMAGE_DIR: Path = settings.image_dir
 IMAGE_DIR.mkdir(parents=True, exist_ok=True)
 
+
+# Stelle sicher, dass stdout UTF-8 ist
+sys.stdout.reconfigure(encoding='utf-8')
+
+# Manuelles Logging-Setup mit UTF-8 StreamHandler
+console_handler = logging.StreamHandler(sys.stdout)
+console_handler.setFormatter(logging.Formatter("%(asctime)s - %(message)s"))
+console_handler.setLevel(logging.INFO)
+
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+logger.addHandler(console_handler)
+
+# Optional: Logging auch in Datei
 if settings.log_to_file:
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s - %(message)s",
-        handlers=[
-            logging.FileHandler(settings.log_file_path),
-            logging.StreamHandler()
-        ]
-    )
-else:
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s - %(message)s"
-    )
+    file_handler = logging.FileHandler(settings.log_file_path, encoding="utf-8")
+    file_handler.setFormatter(logging.Formatter("%(asctime)s - %(message)s"))
+    file_handler.setLevel(logging.INFO)
+    logger.addHandler(file_handler)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -59,8 +67,12 @@ async def lifespan(app: FastAPI):
                     # tatsächliche Verarbeitung in Thread auslagern
                     def work():
                         # hier ist deine ursprüngliche /chat-Logik
+                        print("image job")
                         if job.image_gen:
                             client.activate_image_gen()
+                            if client.is_image_gen_active():
+                                print("image is active")
+
                             client.send_message(job.message, mode="image_gen")
                             url = client.get_last_image()
                             if url:
@@ -71,6 +83,8 @@ async def lifespan(app: FastAPI):
                                 )
                                 job.result = f"{settings.server_url}/image/{path.name}"
                                 job.mode = "image_gen"
+                            if client.is_image_gen_active():
+                                client.activate_image_gen()
                         else:
                             client.send_message(job.message, mode="default")
                             job.result = client.get_last_message()

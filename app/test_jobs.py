@@ -32,11 +32,12 @@ def poll_job(job_id: int, interval: float=1.0, timeout: float=60.0):
 
 if __name__ == "__main__":
     # 1) Text-Job
-    jid = submit_job("Erkläre Quantenphysik in zwei Sätzen")
-    result = poll_job(jid)
-    print("Ergebnis Text-Job:", result["result"])
+    #jid = submit_job("Erkläre Quantenphysik in zwei Sätzen")
+    #result = poll_job(jid)
+    #print("Ergebnis Text-Job:", result["result"])
 
     # 2) Bild-Job
-    jid2 = submit_job("Erstelle ein Bild von einem Sonnenuntergang", image_gen=True)
+    # if image to be generated 
+    jid2 = submit_job("Bild erstellen: Erstelle ein Bild von einem Sonnenuntergang mit einem Huhn. Comic stil.", image_gen=True)
     result2 = poll_job(jid2)
     print("Ergebnis Bild-Job:", result2["result"])
