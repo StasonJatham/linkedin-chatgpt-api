@@ -5,6 +5,7 @@ from db import SessionLocal, Job
 
 router = APIRouter()
 
+
 def get_db():
     db = SessionLocal()
     try:
@@ -12,18 +13,20 @@ def get_db():
     finally:
         db.close()
 
+
 @router.post("/jobs", status_code=status.HTTP_202_ACCEPTED)
 def create_job(data: MessageIn, db: Session = Depends(get_db)):
     job = Job(
         message=data.message,
         web_search=data.web_search,
         image_gen=data.image_gen,
-        deep_research=data.deep_research
+        deep_research=data.deep_research,
     )
     db.add(job)
     db.commit()
     db.refresh(job)
     return {"job_id": job.id, "status": job.status}
+
 
 @router.get("/jobs/{job_id}")
 def read_job(job_id: int, db: Session = Depends(get_db)):

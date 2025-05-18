@@ -1,6 +1,7 @@
 from pydantic_settings import BaseSettings
 from pathlib import Path
 
+
 class Settings(BaseSettings):
     # === Verzeichnisse & URLs ===
     image_dir: Path = Path("./tmp/downloads")
@@ -18,6 +19,7 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
+
 
 # Instanz, die du überall importierst:
 settings = Settings()

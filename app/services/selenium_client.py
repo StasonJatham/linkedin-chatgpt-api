@@ -1,5 +1,3 @@
-# app/services/selenium_client.py
-
 from pathlib import Path
 import time
 import logging
@@ -10,6 +8,7 @@ from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 
 logger = logging.getLogger(__name__)
+
 
 def init_driver(user_data_dir: Path) -> webdriver.Chrome:
     """Initialisiert und returniert einen Chrome WebDriver."""
@@ -22,13 +21,13 @@ def init_driver(user_data_dir: Path) -> webdriver.Chrome:
     options.add_argument(f"--user-data-dir={str(user_data_dir.resolve())}")
     options.add_argument("--log-level=3")
     driver = webdriver.Chrome(
-        service=Service(ChromeDriverManager().install()),
-        options=options
+        service=Service(ChromeDriverManager().install()), options=options
     )
     driver.get("https://chatgpt.com/")
     # Hier könntest du automatisches Login einbauen oder
     # für das manuelle Login einen Hook / Callback definieren.
     return driver
+
 
 class ChatGPTClient:
     def __init__(self, driver: webdriver.Chrome):
@@ -51,17 +50,17 @@ class ChatGPTClient:
             input()
             if not self.is_logged_in():
                 raise RuntimeError("Login fehlgeschlagen – bitte erneut einloggen.")
-            
+
     def set_message(self, message: str):
         # TODO: IF image then you cannot set inner html of this, you must add the text like "huhn" the span needs to stay intact
         # <p><span data-mention-id="picture_v2" data-mention-hint="Bild erstellen " class="hint-pill" contenteditable="false">Bild erstellen </span>huhn</p>
         logger.info(f"Sende Nachricht: {message}")
         self.driver.execute_script(
             "document.querySelector('#prompt-textarea > p').innerHTML = arguments[0];",
-            message
+            message,
         )
 
-    def get_new_chat(self, model:str="gpt-4o",tmp:bool=True):
+    def get_new_chat(self, model: str = "gpt-4o", tmp: bool = True):
         # https://chatgpt.com/?model=o4-mini
         # https://chatgpt.com/?model=o4-mini-high
         # https://chatgpt.com/?model=gpt-4-5
@@ -145,17 +144,25 @@ class ChatGPTClient:
         return imgs[-1] if imgs else ""
 
     def activate_web_search(self):
-        btn = self.driver.find_element(By.CSS_SELECTOR, 'button[data-testid="composer-button-search"]')
+        btn = self.driver.find_element(
+            By.CSS_SELECTOR, 'button[data-testid="composer-button-search"]'
+        )
         btn.click()
 
     def is_web_search_active(self) -> bool:
-        btn = self.driver.find_element(By.CSS_SELECTOR, 'button[data-testid="composer-button-search"]')
+        btn = self.driver.find_element(
+            By.CSS_SELECTOR, 'button[data-testid="composer-button-search"]'
+        )
         return btn.get_attribute("aria-pressed") == "true"
 
     def activate_image_gen(self):
-        btn = self.driver.find_element(By.CSS_SELECTOR, 'button[data-testid="composer-button-create-image"]')
+        btn = self.driver.find_element(
+            By.CSS_SELECTOR, 'button[data-testid="composer-button-create-image"]'
+        )
         btn.click()
 
     def is_image_gen_active(self) -> bool:
-        btn = self.driver.find_element(By.CSS_SELECTOR, 'button[data-testid="composer-button-create-image"]')
+        btn = self.driver.find_element(
+            By.CSS_SELECTOR, 'button[data-testid="composer-button-create-image"]'
+        )
         return btn.get_attribute("aria-pressed") == "true"

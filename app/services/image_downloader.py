@@ -1,18 +1,15 @@
-
 from pathlib import Path
 import httpx
 import mimetypes
 import uuid
 import logging
 from config import settings
+
 logger = logging.getLogger(__name__)
 
 
-
 def download_image(
-    url: str,
-    save_dir: Path = settings.image_dir,
-    timeout: int = 15
+    url: str, save_dir: Path = settings.image_dir, timeout: int = 15
 ) -> Path:
     """
     Lädt ein Bild von der angegebenen URL herunter, ermittelt den MIME-Typ
@@ -37,7 +34,9 @@ def download_image(
             response = client.get(url)
             response.raise_for_status()
 
-            content_type = response.headers.get("content-type", "").split(";")[0].strip()
+            content_type = (
+                response.headers.get("content-type", "").split(";")[0].strip()
+            )
             extension = mimetypes.guess_extension(content_type) or ".bin"
 
             filename = f"{uuid.uuid4().hex}{extension}"

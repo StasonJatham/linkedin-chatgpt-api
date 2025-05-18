@@ -1,20 +1,15 @@
-from sqlalchemy import (
-    create_engine, Column, Integer, String,
-    Boolean, DateTime, Text
-)
+from sqlalchemy import create_engine, Column, Integer, String, Boolean, DateTime, Text
 from sqlalchemy.orm import sessionmaker, declarative_base
 from datetime import datetime
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./jobs.db"
 
 engine = create_engine(
-    SQLALCHEMY_DATABASE_URL,
-    connect_args={"check_same_thread": False}
+    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
 )
-SessionLocal = sessionmaker(
-    autocommit=False, autoflush=False, bind=engine
-)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
+
 
 class Job(Base):
     __tablename__ = "jobs"
@@ -27,11 +22,8 @@ class Job(Base):
     result = Column(Text, nullable=True)
     mode = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(
-        DateTime,
-        default=datetime.utcnow,
-        onupdate=datetime.utcnow
-    )
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
 
 def init_db():
     Base.metadata.create_all(bind=engine)

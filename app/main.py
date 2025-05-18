@@ -1,4 +1,3 @@
-from datetime import time
 import logging
 import mimetypes
 from pathlib import Path
@@ -22,7 +21,7 @@ IMAGE_DIR.mkdir(parents=True, exist_ok=True)
 
 
 # Stelle sicher, dass stdout UTF-8 ist
-sys.stdout.reconfigure(encoding='utf-8')
+sys.stdout.reconfigure(encoding="utf-8")
 
 # Manuelles Logging-Setup mit UTF-8 StreamHandler
 console_handler = logging.StreamHandler(sys.stdout)
@@ -56,9 +55,9 @@ async def lifespan(app: FastAPI):
             try:
                 pending = (
                     db.query(Job)
-                      .filter(Job.status == "pending")
-                      .order_by(Job.created_at)
-                      .all()
+                    .filter(Job.status == "pending")
+                    .order_by(Job.created_at)
+                    .all()
                 )
                 for job in pending:
                     job.status = "running"
@@ -79,7 +78,7 @@ async def lifespan(app: FastAPI):
                                 path = download_image(
                                     url,
                                     save_dir=IMAGE_DIR,
-                                    timeout=settings.http_timeout
+                                    timeout=settings.http_timeout,
                                 )
                                 job.result = f"{settings.server_url}/image/{path.name}"
                                 job.mode = "image_gen"
@@ -108,9 +107,11 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 app.include_router(jobs_router, prefix="", tags=["jobs"])
 
+
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
+
 
 @app.get("/image/{filename}")
 def serve_image(filename: str):
@@ -119,6 +120,7 @@ def serve_image(filename: str):
         raise HTTPException(status_code=404, detail="Bild nicht gefunden")
     mime_type = mimetypes.guess_type(file_path)[0] or "application/octet-stream"
     return FileResponse(file_path, media_type=mime_type)
+
 
 @app.post("/chat", response_model=MessageOut)
 def chat_endpoint(data: MessageIn):
@@ -150,7 +152,9 @@ def chat_endpoint(data: MessageIn):
             client.send_message(data.message, mode=mode)
             image_url = client.get_last_image()
             if image_url:
-                path = download_image(image_url, save_dir=IMAGE_DIR, timeout=settings.http_timeout)
+                path = download_image(
+                    image_url, save_dir=IMAGE_DIR, timeout=settings.http_timeout
+                )
                 filename = path.name
                 result = f"{settings.server_url}/image/{filename}"
             else:
@@ -164,4 +168,3 @@ def chat_endpoint(data: MessageIn):
         raise HTTPException(status_code=500, detail=str(e))
 
     return MessageOut(**data.model_dump(), result=result, mode=mode)
-
