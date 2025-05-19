@@ -84,7 +84,7 @@ class ChatGPTClient:
             "return document.querySelector('.loading-shimmer') !== null;"
         )
 
-    def wait_for_response(self, timeout: int = 40):
+    def wait_for_response(self, timeout: int = 80):
         start = time.time()
         has_started = False
         logger.info("+ Warte auf Start der Antwort...")
@@ -150,10 +150,23 @@ class ChatGPTClient:
         btn.click()
 
     def is_web_search_active(self) -> bool:
+        is_pressed = False
         btn = self.driver.find_element(
             By.CSS_SELECTOR, 'button[data-testid="composer-button-search"]'
         )
-        return btn.get_attribute("aria-pressed") == "true"
+
+        if btn:
+            is_pressed = btn.get_attribute("aria-pressed") == "true"
+        else:
+            time.sleep(2)
+            btn = self.driver.find_element(
+                By.CSS_SELECTOR, 'button[data-testid="composer-button-search"]'
+            )
+
+            if btn:
+                is_pressed = btn.get_attribute("aria-pressed") == "true"
+                
+        return is_pressed
 
     def activate_image_gen(self):
         btn = self.driver.find_element(

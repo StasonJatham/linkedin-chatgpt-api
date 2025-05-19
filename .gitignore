@@ -5,3 +5,5 @@ __pycache__
 *.log
 **.log
 chat_automation.log
+test.json
+meow.html
