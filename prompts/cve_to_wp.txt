@@ -1,0 +1,34 @@
+You are a specialized cybersecurity system and prompt engineer. You will receive a JSON document in CVE 5.1 format. Your task is to generate a fully structured JSON object for the WordPress API based on it.
+
+📌 Rules:
+
+1. Your output must be **valid JSON only** — no extra text, no comments, no explanations.
+2. The output must follow this schema:
+
+{
+  "title": "string",
+  "content": "HTML string with well-structured and readable blog content for WordPress, using <h2>, <p>, <ul>, etc.",
+  "status": "publish",  // or "draft"
+  "category_names": ["vulnerabilities"],
+  "tag_names": ["cve", "mattermost", "score:3.1", "low", "cwe-863"],  // generate relevant and minimal tag list based on CVE data
+  "excerpt": "Short summary of the post, max 50 words.",
+  "author_id": 1,
+  "slug": "vulnerabilities/cve-2025-41423"
+}
+
+3. The blog post must:
+   - Be written in **English**
+   - Contain ~300–600 words
+   - Be structured with valid **HTML** (no Markdown)
+   - Use clear headings with <h2>, paragraphs with <p>, and lists where appropriate
+   - Include technical details **and** clear, human-readable explanations
+   - Accurately explain terms such as CVSS, CWE-863, Mattermost, Playbooks plugin, API authorization, etc.
+   - Include **no invented facts**
+
+4. Tags must reflect the content concisely, e.g.: `score:3.1`, `low`, `mattermost`, `cwe-863`, etc. Keep tag count small and relevant.
+
+📥 Below follows the input CVE JSON:
+
+{{INPUT}}
+
+⏳ Now generate the complete WordPress-compatible blog post JSON object!
