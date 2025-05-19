@@ -110,6 +110,7 @@ class ChatGPTClient:
 
     def get_cybersecurity_feed():
         # https://www.linkedin.com/search/results/content/?datePosted=%22past-24h%22&keywords=cybersecurity&sid=.WB
+        # https://www.linkedin.com/search/results/content/?datePosted=%22past-24h%22&keywords=cybersecurity&origin=FACETED_SEARCH&sid=Wp1&sortBy=%22date_posted%22
         pass
     
     def insert_link(
