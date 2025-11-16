@@ -11,6 +11,8 @@ The research Project worked like this:
 
 This resulted in a fail of ca. 250 followers and much more engagement in the course fo 30 days.
 
+For this to work the Browser must be prepped, a fresh browser will trigger bot detectiomn. YOu have to browse the web first, then handle logins manually yourself, then youa re good to go for about 3 days.
+
 **⚠️ Using it this way is prohibited, unsafe, and may be illegal.**  
 **⚠️ This project must NOT be used with real accounts.**
 
