@@ -57,7 +57,7 @@ class ChatGPTClient:
 
     def start_editor(self):
         self.driver.get(
-            "https://www.linkedin.com/in/karl-machleidt/overlay/create-post/"
+            "https://www.linkedin.com/in/YOUR-USERNAME/overlay/create-post/"
         )
         try:
             self.wait.until(
